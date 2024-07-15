@@ -113,7 +113,7 @@ function getListItem(index, places) {
     } else {
         itemStr += '    <span>' + places.address_name + '</span>';
     }
-    itemStr += '  <span class="tel">' + places.phone + '</span>' +
+    itemStr += '  <span class="tel">' + (places.phone ? places.phone : '정보 없음') + '</span>' + // Handle undefined phone
         '</div>';
 
     el.innerHTML = itemStr;
