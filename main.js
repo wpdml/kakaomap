@@ -8,18 +8,19 @@ var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 document.getElementById('keyword').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') searchPlaces();
 });
+document.getElementById('search-btn').addEventListener('click', searchPlaces);
 
 function searchPlaces() {
     var keyword = document.getElementById('keyword').value.trim();
     if (!keyword) {
-        alert('키워드를 입력해주세요!');
+        alert('Please enter a keyword!');
         return;
     }
     ps.keywordSearch(keyword, function(data, status) {
         if (status === kakao.maps.services.Status.OK) {
             displayPlaces(data);
         } else {
-            alert('검색 결과가 존재하지 않습니다.');
+            alert('No search results found.');
         }
     }); 
 }
@@ -27,7 +28,7 @@ function searchPlaces() {
 function displayPlaces(places) {
     var bounds = new kakao.maps.LatLngBounds();
     removeMarkers();
-    places.forEach(function(place, index) {
+    places.forEach(function(place) {
         var position = new kakao.maps.LatLng(place.y, place.x);
         var marker = new kakao.maps.Marker({ position: position });
         marker.setMap(map);
@@ -47,4 +48,3 @@ function removeMarkers() {
     });
     markers = [];
 }
-
