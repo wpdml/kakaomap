@@ -7,7 +7,7 @@
 
 
 let searchButton = document.getElementById("search-button");
-searchButton.addEventListener("click",searchPlaces)
+searchButton.addEventListener("click",searchPlaces);
 
 var container = document.getElementById('map');
 var options = {
