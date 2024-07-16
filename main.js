@@ -20,7 +20,7 @@ var zoomControl = new kakao.maps.ZoomControl();
 map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
 var ps = new kakao.maps.services.Places();
-var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+var infoWindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 var markers = [];
 
 // Handle search input and call searchPlaces when Enter is pressed
@@ -63,10 +63,10 @@ function placesSearchCB(data, status, pagination) {
   }
 }
 // Display an infowindow on a marker
-function Infowindow(marker, title) {
+function displayInfoWindow(marker, title) {
     var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
+    infoWindow.setContent(content);
+    infoWindow.open(map, marker);
   }
 
 // 검색 결과 목록과 마커를 표출하는 함수입니다
@@ -100,19 +100,19 @@ function displayPlaces(places) {
         // mouseout 했을 때는 인포윈도우를 닫습니다
         (function(marker, title) {
             kakao.maps.event.addListener(marker, 'mouseover', function() {
-                displayInfowindow(marker, title);
+                displayInfoWindow(marker, title);
             });
 
             kakao.maps.event.addListener(marker, 'mouseout', function() {
-                infowindow.close();
+                infoWindow.close();
             });
 
             itemEl.onmouseover =  function () {
-                displayInfowindow(marker, title);
+                displayInfoWindow(marker, title);
             };
 
             itemEl.onmouseout =  function () {
-                infowindow.close();
+                infoWindow.close();
             };
         })(marker, places[i].place_name);
 
