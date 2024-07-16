@@ -5,6 +5,8 @@ var options = {
 };
 
 var map = new kakao.maps.Map(container, options);
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 var ps = new kakao.maps.services.Places(); 
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
@@ -60,7 +62,7 @@ function displayMarker(place) {
 
     // Add click event listener to the marker
     kakao.maps.event.addListener(marker, 'click', function() {
-        displayInfowindow(marker, place.place_name);
+        displayCustomInfoWindow(marker, place.place_name);
     });
 
     markers.push(marker);
@@ -107,10 +109,10 @@ function displayPagination(pagination) {
 }
 
 // Display an infowindow on a marker
-function displayInfowindow(marker, title) {
-    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
+function displayCustomInfoWindow(marker, title) {
+    var customInfowindow = document.getElementById('custom-infowindow');
+    customInfowindow.innerHTML = '<div class="infowindow-content"><h3>' + place.place_name + '</h3><p>' + place.address_name + '</p></div>';
+    customInfowindow.style.display = 'block';
 }
 
 // Remove all child nodes of an element
