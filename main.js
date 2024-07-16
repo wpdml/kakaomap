@@ -1,11 +1,33 @@
+//검색 목록 띄우기 
+//줌인 줌아웃 가능하게 만들기
+//줌인 줌아웃 지도 영역에 따라서 위치 표시
+//페이지 네이션
+//마커 누르면 내용 불러오기
+//이 지역 검색
+
+
 let searchButton = document.getElementById("search-button");
 searchButton.addEventListener("click",searchPlaces)
 
 var container = document.getElementById('map');
 var options = {
-    center: new kakao.maps.LatLng(33.450701, 126.570667),
+    center: new kakao.maps.LatLng(37.541, 126.986),
     level: 3
 };
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+// Zoom in function
+function zoomIn() {
+    var level = map.getLevel();
+    map.setLevel(level - 1); // Zoom in
+}
+
+// Zoom out function
+function zoomOut() {
+    var level = map.getLevel();
+    map.setLevel(level + 1); // Zoom out
+}
 
 var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
