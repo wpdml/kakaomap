@@ -164,3 +164,4 @@ function toggleSearch() {
         searchBar.style.display = 'none';
     }
 }
+document.getElementById('search-button').addEventListener('click', searchPlaces);
