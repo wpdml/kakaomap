@@ -14,6 +14,8 @@ var options = {
     center: new kakao.maps.LatLng(37.541, 126.986),
     level: 3
 };
+
+var map = new kakao.maps.Map(container, options);
 var zoomControl = new kakao.maps.ZoomControl();
 map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
@@ -27,12 +29,10 @@ function zoomIn() {
 function zoomOut() {
     var level = map.getLevel();
     map.setLevel(level + 1); // Zoom out
-}
-
-var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
+}
 
 // Handle search input and call searchPlaces when Enter is pressed
 function handleSearch(event) {
