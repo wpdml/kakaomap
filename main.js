@@ -63,6 +63,8 @@ function displayMarker(place) {
     // Add click event listener to the marker
     kakao.maps.event.addListener(marker, 'click', function() {
         displayCustomInfoWindow(marker, place.place_name);
+        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+        infowindow.open(map, marker);
     });
 
     markers.push(marker);
