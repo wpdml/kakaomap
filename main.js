@@ -11,66 +11,66 @@ var ps = new kakao.maps.services.Places();
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 
-// Handle search input and call searchPlaces when Enter is pressed
 function handleSearch(event) {
     if (event.key === 'Enter') {
         searchPlaces();
     }
 }
 
-// Search for places based on the keyword
 function searchPlaces() {
-    var keyword = document.getElementById('search-bar').value;
+    var keyword = document.getElementById('search-bar').value.trim(); // Trim whitespace
 
-    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+    if (!keyword) {
         alert('키워드를 입력해주세요!');
         return false;
     }
 
-    // Use the keyword to search for places
     ps.keywordSearch(keyword, placesSearchCB);
 }
 
-// Callback function for the keyword search
 function placesSearchCB(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
         var bounds = new kakao.maps.LatLngBounds();
         
-        // Clear existing markers
         removeMarker();
-        
-        // Display markers for each place
+        removeAllChildNodes(document.getElementById('placesList'));
+
         for (var i = 0; i < data.length; i++) {
             displayMarker(data[i]);    
             bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
         }
 
-        // Adjust the map bounds to show all markers
         map.setBounds(bounds);
 
-        // Display pagination
         displayPagination(pagination);
         displayPlaces(data);
+    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        alert('검색 결과가 존재하지 않습니다.');
+        return;
+
+    } else if (status === kakao.maps.services.Status.ERROR) {
+        alert('검색 결과 중 오류가 발생했습니다.');
+        return;
     } 
 }
 
-// Display a marker for a place
 function displayMarker(place) {
     var marker = new kakao.maps.Marker({
         map: map,
         position: new kakao.maps.LatLng(place.y, place.x)
     });
 
-    // Add click event listener to the marker
-    kakao.maps.event.addListener(marker, 'click', function() {
+    kakao.maps.event.addListener(marker, 'mouseover', function() {
         infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
         infowindow.open(map, marker);
+    });
+    kakao.maps.event.addListener(marker, 'mouseout', function() {
+        infowindow.close();
     });
 
     markers.push(marker);
 }
 
-// Remove all markers from the map
 function removeMarker() {
     for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
@@ -78,16 +78,13 @@ function removeMarker() {
     markers = [];
 }
 
-// Display pagination for the search results
 function displayPagination(pagination) {
     var paginationEl = document.getElementById('pagination'),
         fragment = document.createDocumentFragment(),
         i;
 
     // Remove existing pagination
-    while (paginationEl.hasChildNodes()) {
-        paginationEl.removeChild(paginationEl.lastChild);
-    }
+    removeAllChildNodes(paginationEl);
 
     // Create pagination links
     for (i = 1; i <= pagination.last; i++) {
@@ -101,6 +98,7 @@ function displayPagination(pagination) {
             el.onclick = (function(i) {
                 return function() {
                     pagination.gotoPage(i);
+                    scrollToTop();
                 }
             })(i);
         }
@@ -110,58 +108,72 @@ function displayPagination(pagination) {
     paginationEl.appendChild(fragment);
 }
 
-// Display places list
+function scrollToTop() {
+    var menuWrap = document.getElementById('menu_wrap');
+    if (menuWrap) {
+        menuWrap.classList.add('scroll-to-top'); 
+        menuWrap.scrollTop = 0; 
+        setTimeout(function() {
+            menuWrap.classList.remove('scroll-to-top');
+        }, 500); 
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
+}
+
 function displayPlaces(places) {
     var listEl = document.getElementById('placesList');
     var fragment = document.createDocumentFragment();
-    var bounds = new kakao.maps.LatLngBounds();
-    removeAllChildNodes(listEl);
 
     for (var i = 0; i < places.length; i++) {
-        var itemEl = getListItem(i, places[i]); // get element
+        var itemEl = getListItem(i, places[i]);
         fragment.appendChild(itemEl);
     }
 
     listEl.appendChild(fragment);
 }
-// Create a list item for each place
+
 function getListItem(index, place) {
     var el = document.createElement('li');
-    var itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
-                  '<div class="info">' +
-                  '   <h5>' + place.place_name + '</h5>';
+    el.className = 'item';
+
+    var itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+        '<div class="info">' +
+        '<h5>' + place.place_name + '</h5>';
 
     if (place.road_address_name) {
-        itemStr += '    <span>' + place.road_address_name + '</span>' +
-                   '   <span class="jibun gray">' + place.address_name + '</span>';
+        itemStr += '<div><span>' + place.road_address_name + '</span></div>' +
+            '<div><span class="jibun gray">' + place.address_name + '</span></div>';
     } else {
-        itemStr += '    <span>' + place.address_name + '</span>';
+        itemStr += '<div><span>' + place.address_name + '</span></div>';
     }
 
-    itemStr += '  <span class="tel">' + place.phone + '</span>' +
-               '</div>';
+    itemStr += '<div><span class="tel">' + place.phone + '</span></div>' +
+        '</div>';
 
     el.innerHTML = itemStr;
-    el.className = 'item';
+
+    el.addEventListener('mouseover', function() {
+        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+        infowindow.open(map, markers[index]);
+    });
+
+    el.addEventListener('mouseout', function() {
+        infowindow.close();
+    });
 
     return el;
 }
 
-// Remove all child nodes of an element
-function removeAllChildNods(el) {   
+function removeAllChildNodes(el) {   
     while (el.hasChildNodes()) {
         el.removeChild(el.lastChild);
     }
 }
 
-// Function to toggle the search bar visibility
 function toggleSearch() {
     var searchBar = document.getElementById('search-bar');
-    if (searchBar.style.display === 'none' || searchBar.style.display === '') {
-        searchBar.style.display = 'inline-block';
-        searchBar.focus();
-    } else {
-        searchBar.style.display = 'none';
-    }
+    searchBar.style.display = (searchBar.style.display === 'none' || searchBar.style.display === '') ? 'inline-block' : 'none';
 }
+
 document.getElementById('search-button').addEventListener('click', searchPlaces);

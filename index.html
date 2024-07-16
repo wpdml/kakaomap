@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Kakao 지도 시작하기</title>
+    <title>지도 시작하기</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,21 +11,16 @@
       <div class="search-container">
         <span class="search-icon" onclick="toggleSearch()">🔍</span>
         <input
-          type="text"
-          id="search-bar"
-          placeholder="장소 검색..."
-          onkeypress="handleSearch(event)"
-        />
+          type="text" id="search-bar" placeholder="장소 검색..." onkeypress="handleSearch(event)"/>
         <button id="search-button">검색</button>
       </div>
-      <ul id="placesList"></ul>
-      <div id="pagination"></div>
+	  	<ul id="placesList"></ul>
+		<div id="pagination">
+		</div>
     </div>
-
     <script
       type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ebba33f14c992d835b3693d7ffe38005&libraries=services"
-    ></script>
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=599b882080db6119ba382e1ca3eddee0&libraries=services"></script>
     <script src="main.js"></script>
   </body>
 </html>
