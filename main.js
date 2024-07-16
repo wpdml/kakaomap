@@ -15,13 +15,13 @@ var options = {
 };
 
 var map = new kakao.maps.Map(container, options);
-
 var zoomControl = new kakao.maps.ZoomControl();
 map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
 var ps = new kakao.maps.services.Places();
 var infoWindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 var markers = [];
+var bounds = new kakao.maps.LatLngBounds();
 
 // Handle search input and call searchPlaces when Enter is pressed
 function handleSearch(event) {
@@ -54,6 +54,8 @@ function placesSearchCB(data, status, pagination) {
 
     // Display pagination
     displayPagination(pagination);
+    
+    map.setBounds(bounds);
   } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
     alert("검색 결과가 존재하지 않습니다.");
     return;
@@ -71,7 +73,6 @@ function displayInfoWindow(marker, title) {
 
 // 검색 결과 목록과 마커를 표출하는 함수입니다
 function displayPlaces(places) {
-
     var listEl = document.getElementById('placesList'), 
     menuEl = document.getElementById('menu_wrap'),
     fragment = document.createDocumentFragment(), 
@@ -80,12 +81,10 @@ function displayPlaces(places) {
     
     // 검색 결과 목록에 추가된 항목들을 제거합니다
     removeAllChildNods(listEl);
-
     // 지도에 표시되고 있는 마커를 제거합니다
     removeMarker();
     
     for ( var i=0; i<places.length; i++ ) {
-
         // 마커를 생성하고 지도에 표시합니다
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
             marker = addMarker(placePosition, i), 
@@ -161,19 +160,6 @@ function getListItem(index, places) {
 
 // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
 function addMarker(position, idx, title) {
-    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
-        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
-        imgOptions =  {
-            spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-            spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-            offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
-        },
-        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
-            marker = new kakao.maps.Marker({
-            position: position, // 마커의 위치
-            image: markerImage 
-        });
-
     marker.setMap(map); // 지도 위에 마커를 표출합니다
     markers.push(marker);  // 배열에 생성된 마커를 추가합니다
 
