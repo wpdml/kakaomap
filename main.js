@@ -16,8 +16,7 @@ var options = {
 };
 
 var map = new kakao.maps.Map(container, options);
-var zoomControl = new kakao.maps.ZoomControl();
-map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
 
 // Handle search input and call searchPlaces when Enter is pressed
 function handleSearch(event) {
