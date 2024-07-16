@@ -50,6 +50,7 @@ function placesSearchCB(data, status, pagination) {
 
         // Display pagination
         displayPagination(pagination);
+        displayPlaces(data);
     } 
 }
 
@@ -62,7 +63,6 @@ function displayMarker(place) {
 
     // Add click event listener to the marker
     kakao.maps.event.addListener(marker, 'click', function() {
-        displayCustomInfoWindow(marker, place.place_name);
         infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
         infowindow.open(map, marker);
     });
@@ -110,11 +110,41 @@ function displayPagination(pagination) {
     paginationEl.appendChild(fragment);
 }
 
-// Display an infowindow on a marker
-function displayCustomInfoWindow(marker, title) {
-    var customInfowindow = document.getElementById('custom-infowindow');
-    customInfowindow.innerHTML = '<div class="infowindow-content"><h3>' + place.place_name + '</h3><p>' + place.address_name + '</p></div>';
-    customInfowindow.style.display = 'block';
+// Display places list
+function displayPlaces(places) {
+    var listEl = document.getElementById('placesList');
+    var fragment = document.createDocumentFragment();
+    var bounds = new kakao.maps.LatLngBounds();
+    removeAllChildNodes(listEl);
+
+    for (var i = 0; i < places.length; i++) {
+        var itemEl = getListItem(i, places[i]); // get element
+        fragment.appendChild(itemEl);
+    }
+
+    listEl.appendChild(fragment);
+}
+// Create a list item for each place
+function getListItem(index, place) {
+    var el = document.createElement('li');
+    var itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                  '<div class="info">' +
+                  '   <h5>' + place.place_name + '</h5>';
+
+    if (place.road_address_name) {
+        itemStr += '    <span>' + place.road_address_name + '</span>' +
+                   '   <span class="jibun gray">' + place.address_name + '</span>';
+    } else {
+        itemStr += '    <span>' + place.address_name + '</span>';
+    }
+
+    itemStr += '  <span class="tel">' + place.phone + '</span>' +
+               '</div>';
+
+    el.innerHTML = itemStr;
+    el.className = 'item';
+
+    return el;
 }
 
 // Remove all child nodes of an element
@@ -134,5 +164,3 @@ function toggleSearch() {
         searchBar.style.display = 'none';
     }
 }
-
-document.getElementById('search-button').addEventListener('click', searchPlaces);
