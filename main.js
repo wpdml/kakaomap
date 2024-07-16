@@ -62,6 +62,12 @@ function placesSearchCB(data, status, pagination) {
     return;
   }
 }
+// Display an infowindow on a marker
+function Infowindow(marker, title) {
+    var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+  }
 
 // 검색 결과 목록과 마커를 표출하는 함수입니다
 function displayPlaces(places) {
@@ -212,13 +218,6 @@ function displayPagination(pagination) {
     fragment.appendChild(el);
   }
   paginationEl.appendChild(fragment);
-}
-
-// Display an infowindow on a marker
-function displayInfowindow(marker, title) {
-  var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
-  infowindow.setContent(content);
-  infowindow.open(map, marker);
 }
 
 // Remove all child nodes of an element
