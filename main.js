@@ -1,3 +1,6 @@
+let searchButton = document.getElementById("search-button");
+searchButton.addEventListener("click",searchPlaces)
+
 var container = document.getElementById('map');
 var options = {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
